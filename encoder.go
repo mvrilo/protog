@@ -102,15 +102,14 @@ func (e *Encoder) writeMessage(name string, fields map[string]string) {
 
 	e.Write(tBlockStart)
 
-	var i int = 1
+	var i int
 	for fieldName, fieldType := range fields {
-		e.writeNL()
+		i++
 		e.writeNL()
 		e.writeTab()
 		e.Write(fieldType + " " + fieldName + " = " + strconv.Itoa(i))
 		e.Write(tEol)
 	}
-	e.writeNL()
 	e.writeNL()
 	e.Write(tBlockEnd)
 }

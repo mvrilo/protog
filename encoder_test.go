@@ -12,21 +12,15 @@ func TestEncode(t *testing.T) {
 		err     error
 	}{
 		{
-			in: map[string]interface{}{
-				"syntax": 3,
-			},
+			in:  map[string]interface{}{"syntax": 3},
 			err: errSyntaxType,
 		},
 		{
-			in: map[string]interface{}{
-				"message": "Hello",
-			},
+			in:  map[string]interface{}{"message": "Hello"},
 			err: errMessageType,
 		},
 		{
-			in: map[string]interface{}{
-				"syntax": "proto3",
-			},
+			in:      map[string]interface{}{"syntax": "proto3"},
 			expects: []byte(`syntax = "proto3";`),
 		},
 		{
