@@ -17,22 +17,25 @@ func TestEncode(t *testing.T) {
 			},
 			err: errSyntaxType,
 		},
-
+		{
+			in: map[string]interface{}{
+				"message": "Hello",
+			},
+			err: errMessageType,
+		},
 		{
 			in: map[string]interface{}{
 				"syntax": "proto3",
 			},
 			expects: []byte(`syntax = "proto3";`),
 		},
-
 		{
 			in: map[string]interface{}{
 				"syntax":  "proto3",
 				"package": "Hello",
 			},
-			expects: []byte("syntax = \"proto3\";\npackage Hello;"),
+			expects: []byte("syntax = \"proto3\";\n\npackage Hello;"),
 		},
-
 		{
 			in: map[string]interface{}{
 				"syntax":  "proto3",
@@ -43,7 +46,7 @@ func TestEncode(t *testing.T) {
 					},
 				},
 			},
-			expects: []byte("syntax = \"proto3\";\npackage Hello;\nmessage Hello {\n\tint64 id = 1;\n}"),
+			expects: []byte("syntax = \"proto3\";\n\npackage Hello;\n\nmessage Hello {\n\n\tint64 id = 1;\n\n}"),
 		},
 	}
 
@@ -54,7 +57,7 @@ func TestEncode(t *testing.T) {
 		}
 
 		if !bytes.Equal(out, tt.expects) {
-			t.Errorf("expects %+v, got %+v\n", string(tt.expects), string(out))
+			t.Errorf("expects %+v, got %+v\n\n", string(tt.expects), string(out))
 		}
 	}
 }

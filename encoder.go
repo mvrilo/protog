@@ -47,14 +47,14 @@ func (e *Encoder) Write(value string) {
 	e.buf.WriteString(value)
 }
 
-func (e *Encoder) WriteNL() {
+func (e *Encoder) writeNL() {
 	if !e.Compact {
 		e.Write("\n")
 	}
 }
 
-// WriteTab writes a tab (\t)"`
-func (e *Encoder) WriteTab() {
+// writeTab writes a tab (\t)"`
+func (e *Encoder) writeTab() {
 	if e.Indent || !e.Compact {
 		e.Write("\t")
 	}
@@ -81,7 +81,8 @@ func (e *Encoder) WriteMessage(value interface{}) error {
 	var i int
 	for msgName, msgFields := range messages {
 		if i > 0 {
-			e.WriteNL()
+			e.writeNL()
+			e.writeNL()
 		}
 		e.writeMessage(msgName, msgFields)
 		i++
@@ -103,12 +104,14 @@ func (e *Encoder) writeMessage(name string, fields map[string]string) {
 
 	var i int = 1
 	for fieldName, fieldType := range fields {
-		e.WriteNL()
-		e.WriteTab()
+		e.writeNL()
+		e.writeNL()
+		e.writeTab()
 		e.Write(fieldType + " " + fieldName + " = " + strconv.Itoa(i))
 		e.Write(tEol)
 	}
-	e.WriteNL()
+	e.writeNL()
+	e.writeNL()
 	e.Write(tBlockEnd)
 }
 
@@ -174,7 +177,8 @@ func (e *Encoder) Bytes() []byte {
 
 	for i, line := range e.lines {
 		if i > 0 {
-			e.WriteNL()
+			e.writeNL()
+			e.writeNL()
 		}
 		e.buf.WriteString(line)
 	}
