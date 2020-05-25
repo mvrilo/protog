@@ -1,7 +1,5 @@
 # protog
 
-## Description
-
 Protobuf file generator for the command line.
 
 ## Installation
@@ -42,6 +40,10 @@ message HelloResponse {
 	string data = 2;
 }
 ```
+
+## License
+
+MIT
 
 ## Author
 
