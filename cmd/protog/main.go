@@ -23,10 +23,10 @@ func fatalErr(err error) {
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:                   "protog <name> [-ofop] [-m Message[field:type,field:type,...]]",
+		Use:                   "protog <name> [-hofop] [-m Message[field:type,field:type,...]]",
 		Short:                 "protog is a protobuf file generator for the command line",
 		Example:               "protog Greet.v1 -m HelloRequest[data:string]",
-		Version:               "1.0.0",
+		Version:               "0.0.1",
 		DisableFlagsInUseLine: true,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {

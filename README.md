@@ -11,7 +11,7 @@ go get github.com/mvrilo/protog/cmd/protog
 ## Usage
 
 ```
-protog <name> [-m Message[id:int64,fields:types,...]]
+protog <name> [-dhofop] [-m Message[field:type,field:type,...]]
 ```
 
 ## Example Usage
