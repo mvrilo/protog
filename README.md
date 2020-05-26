@@ -32,17 +32,20 @@ syntax = "proto3";
 
 package Greet.v1;
 
-message HelloResponse {
-	int64 id = 1;
-	string data = 2;
-}
+import "google/protobuf/empty.proto";
 
 message HelloRequest {
 	string data = 1;
 }
 
+message HelloResponse {
+	string data = 1;
+	int64 id = 2;
+}
+
 service HelloService {
 	rpc SendHello (HelloRequest) returns (HelloResponse) {};
+	rpc CheckHello (google.protobuf.Empty) returns (google.protobuf.Empty) {};
 }
 ```
 
