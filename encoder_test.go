@@ -20,6 +20,10 @@ func TestEncode(t *testing.T) {
 			err: errMessageType,
 		},
 		{
+			in:  map[string]interface{}{"service": "Hello"},
+			err: errServiceType,
+		},
+		{
 			in:      map[string]interface{}{"syntax": "proto3"},
 			expects: []byte(`syntax = "proto3";`),
 		},
@@ -34,6 +38,14 @@ func TestEncode(t *testing.T) {
 			in: map[string]interface{}{
 				"syntax":  "proto3",
 				"package": "Hello",
+				"option":  []string{"go_package", "proto"},
+			},
+			expects: []byte("syntax = \"proto3\";\n\npackage Hello;\n\noption \"go_package\" = \"proto\";"),
+		},
+		{
+			in: map[string]interface{}{
+				"syntax":  "proto3",
+				"package": "Hello",
 				"message": map[string]interface{}{
 					"Hello": map[string]string{
 						"id": "int64",
@@ -41,6 +53,49 @@ func TestEncode(t *testing.T) {
 				},
 			},
 			expects: []byte("syntax = \"proto3\";\n\npackage Hello;\n\nmessage Hello {\n\tint64 id = 1;\n}"),
+		},
+		{
+			in: map[string]interface{}{
+				"syntax":  "proto3",
+				"package": "Hello",
+				"message": map[string]interface{}{
+					"HelloRequest": map[string]string{
+						"data": "string",
+					},
+				},
+				"service": map[string]interface{}{
+					"HelloService": map[string]interface{}{
+						"SayHello": map[string]string{
+							"in":  "HelloRequest",
+							"out": "",
+						},
+					},
+				},
+			},
+			expects: []byte("syntax = \"proto3\";\n\npackage Hello;\n\nimport \"google/protobuf/empty.proto\";\n\nmessage HelloRequest {\n\tstring data = 1;\n}\n\nservice HelloService {\n\trpc SayHello (HelloRequest) returns (google.protobuf.Empty) {};\n}"),
+		},
+		{
+			in: map[string]interface{}{
+				"syntax":  "proto3",
+				"package": "Hello",
+				"message": map[string]interface{}{
+					"HelloRequest": map[string]string{
+						"data": "string",
+					},
+					"HelloResponse": map[string]string{
+						"id": "int64",
+					},
+				},
+				"service": map[string]interface{}{
+					"HelloService": map[string]interface{}{
+						"SayHello": map[string]string{
+							"in":  "HelloRequest",
+							"out": "HelloResponse",
+						},
+					},
+				},
+			},
+			expects: []byte("syntax = \"proto3\";\n\npackage Hello;\n\nmessage HelloRequest {\n\tstring data = 1;\n}\n\nmessage HelloResponse {\n\tint64 id = 1;\n}\n\nservice HelloService {\n\trpc SayHello (HelloRequest) returns (HelloResponse) {};\n}"),
 		},
 	}
 
