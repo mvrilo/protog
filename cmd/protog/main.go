@@ -23,7 +23,7 @@ func fatalErr(err error) {
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:                   "protog <name> [-hofop] [-m Message[field:type,field:type,...]]",
+		Use:                   "protog <name> [-fhmops] [-m Message[field:type,field:type,...]] [-s ServiceName[MethodName:In:Out]]",
 		Short:                 "protog is a protobuf file generator for the command line",
 		Example:               "protog Greet.v1 -m HelloRequest[data:string]",
 		Version:               "0.0.1",
@@ -47,23 +47,10 @@ func main() {
 			force, err := flags.GetBool("force")
 			fatalErr(err)
 
-			var filename string
-			if !strings.Contains(name, ".proto") {
-				filename = strings.ToLower(name) + ".proto"
-			}
-
-			path := output + "/" + filename
-			if !force {
-				_, err := os.Stat(path)
-				if err == nil || !os.IsNotExist(err) {
-					fatal("file already exists, pass -f if you want to overwrite it")
-				}
-			}
-
 			messages, err := flags.GetStringArray("message")
 			fatalErr(err)
 
-			msgs := map[string]interface{}{}
+			msgs := make(map[string]interface{})
 			for _, message := range messages {
 				msgSplit := strings.Split(message, "[")
 				if len(msgSplit) != 2 {
@@ -85,6 +72,44 @@ func main() {
 				msgs[msgName] = fields
 			}
 
+			services, err := flags.GetStringArray("service")
+			fatalErr(err)
+
+			svcs := make(map[string]interface{})
+			for _, service := range services {
+				svcSplit := strings.Split(service, "[")
+				if len(svcSplit) != 2 {
+					fatal("error parsing service")
+				}
+
+				svcName := svcSplit[0]
+				svcMethods := strings.Replace(svcSplit[1], "]", "", -1)
+				methods := make(map[string]interface{})
+
+				for _, method := range strings.Split(svcMethods, ",") {
+					parsed := strings.Split(method, ":")
+					if len(parsed) < 1 {
+						fatal("error parsing service methods")
+					}
+
+					methodName := parsed[0]
+					var in, out string
+					if len(parsed) > 1 {
+						in = parsed[1]
+					}
+					if len(parsed) > 2 {
+						out = parsed[2]
+					}
+
+					methods[methodName] = map[string]string{
+						"in":  in,
+						"out": out,
+					}
+				}
+
+				svcs[svcName] = methods
+			}
+
 			in := map[string]interface{}{
 				"syntax":  "proto3",
 				"package": name,
@@ -94,8 +119,33 @@ func main() {
 				in["message"] = msgs
 			}
 
+			if len(svcs) > 0 {
+				in["service"] = svcs
+			}
+
 			data, err := protog.Encode(in)
 			fatalErr(err)
+
+			dryrun, err := flags.GetBool("dryrun")
+			fatalErr(err)
+
+			if dryrun {
+				println(string(data))
+				return
+			}
+
+			var filename string
+			if !strings.Contains(name, ".proto") {
+				filename = strings.ToLower(name) + ".proto"
+			}
+
+			path := output + "/" + filename
+			if !force {
+				_, err := os.Stat(path)
+				if err == nil || !os.IsNotExist(err) {
+					fatal("file already exists, pass -f if you want to overwrite it")
+				}
+			}
 
 			filepath := output + "/" + filename
 			f, err := os.Create(filepath)
@@ -110,7 +160,8 @@ func main() {
 	rootCmd.Flags().BoolP("dryrun", "d", false, "prints the generated proto in the stdout")
 	rootCmd.Flags().StringP("output", "o", ".", "output dir for the generated proto")
 	rootCmd.Flags().StringP("package", "p", "", "package name")
-	rootCmd.Flags().StringArrayP("message", "m", nil, "message related arguments")
+	rootCmd.Flags().StringArrayP("message", "m", nil, "message data")
+	rootCmd.Flags().StringArrayP("service", "s", nil, "service data")
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

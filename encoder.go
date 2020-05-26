@@ -236,7 +236,6 @@ func (e *Encoder) parseServices(value interface{}) (map[string]map[string]map[st
 
 	for svcName, svcMethods := range svcs {
 		services[svcName] = make(map[string]map[string]string)
-
 		methods, ok := svcMethods.(map[string]interface{})
 		if !ok {
 			return nil, errServiceMethodType
