@@ -122,20 +122,23 @@ func (e *Encoder) WritePackage(value interface{}) error {
 
 // WriteOption writes an option
 func (e *Encoder) WriteOption(value interface{}) error {
-	v, ok := value.([]string)
+	v, ok := value.([][]string)
 	if !ok {
 		return errOptionType
 	}
 
-	if len(v) < 2 {
-		return nil
+	for i, opts := range v {
+		if i > 0 {
+			e.writeNL()
+		}
+
+		e.Write(tOption)
+		e.Write(tSpace)
+
+		e.Write(`"` + opts[0] + `" = "` + opts[1] + `"`)
+		e.Write(tEol)
 	}
 
-	e.Write(tOption)
-	e.Write(tSpace)
-
-	e.Write(`"` + v[0] + `" = "` + v[1] + `"`)
-	e.Write(tEol)
 	e.lines[2] = e.buf.String()
 	e.buf.Reset()
 	return nil

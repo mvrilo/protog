@@ -38,7 +38,9 @@ func TestEncode(t *testing.T) {
 			in: map[string]interface{}{
 				"syntax":  "proto3",
 				"package": "Hello",
-				"option":  []string{"go_package", "proto"},
+				"option": [][]string{
+					[]string{"go_package", "proto"},
+				},
 			},
 			expects: []byte("syntax = \"proto3\";\n\npackage Hello;\n\noption \"go_package\" = \"proto\";"),
 		},
