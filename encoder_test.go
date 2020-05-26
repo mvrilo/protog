@@ -40,7 +40,7 @@ func TestEncode(t *testing.T) {
 					},
 				},
 			},
-			expects: []byte("syntax = \"proto3\";\n\npackage Hello;\n\nmessage Hello {\n\n\tint64 id = 1;\n\n}"),
+			expects: []byte("syntax = \"proto3\";\n\npackage Hello;\n\nmessage Hello {\n\tint64 id = 1;\n}"),
 		},
 	}
 
