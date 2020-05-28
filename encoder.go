@@ -320,6 +320,7 @@ func (e *Encoder) WriteService(value interface{}) error {
 	for svcName, svcMethods := range services {
 		if i > 0 {
 			e.writeNL()
+			e.writeNL()
 		}
 		e.writeService(svcName, svcMethods)
 		i++

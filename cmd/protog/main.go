@@ -83,10 +83,20 @@ func parseServices(services []string) (svcs map[string]interface{}) {
 			methodName := parsed[0]
 			var in, out string
 			if len(parsed) > 1 {
-				in = parsed[1]
+				if parsed[1][0] == '+' {
+					in = "stream "
+					in += parsed[1][1:]
+				} else {
+					in = parsed[1]
+				}
 			}
 			if len(parsed) > 2 {
-				out = parsed[2]
+				if parsed[2][0] == '+' {
+					out = "stream "
+					out += parsed[2][1:]
+				} else {
+					out = parsed[2]
+				}
 			}
 
 			methods[methodName] = map[string]string{
