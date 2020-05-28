@@ -69,6 +69,10 @@ service HelloService {
 	rpc SendHello (HelloRequest) returns (HelloResponse) {};
 	rpc CheckHello (google.protobuf.Empty) returns (google.protobuf.Empty) {};
 }
+
+service PingService {
+	rpc SendPing (PingRequest) returns (stream PingResponse) {};
+}
 ```
 
 ## Author
