@@ -1,5 +1,8 @@
 # protog
 
+[![GoDoc](https://godoc.org/github.com/mvrilo/protog?status.svg)](https://godoc.org/github.com/mvrilo/protog) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/mvrilo/protog)](https://goreportcard.com/report/github.com/mvrilo/protog) 
+
 Protobuf file generator for the command line.
 
 ## Installation
@@ -37,7 +40,7 @@ Flags:
 Given the input:
 
 ```
-protog Greet.v1 -d \
+protog Greet.v1 \
     -n go_package:greet \
     -m HelloRequest[data:string] \
     -m HelloResponse[id:int64,data:string] \
